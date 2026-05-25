@@ -38,6 +38,8 @@ const config = {
         { from: `index.html`, to: "", context: `src/` },
         { from: `index.html`, to: "colosseum.html", context: `src/` },
         { from: `manifest.json`, to: "", context: `src/` },
+        { from: `robots.txt`, to: "", context: `src/` },
+        { from: `sitemap.xml`, to: "", context: `src/` },
         {
           from: `assets/images/webappicon.png`,
           to: "webappicon.png",

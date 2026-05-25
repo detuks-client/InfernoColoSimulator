@@ -1,16 +1,58 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, user-scalable=no">
     <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" type="image/png" href="/webappicon.png">
     <link rel="apple-touch-icon" href="/webappicon.png">
-    <meta name="application-name" content="Inferno Trainer">
+    <link rel="canonical" href="https://colosseum-simulator.detuks.com/">
+    <meta name="application-name" content="Colosseum Simulator">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="robots" content="index,follow">
+    <title>OSRS Colosseum Simulator &amp; Sol Heredit Trainer &mdash; Fortis Colosseum Practice</title>
+    <meta name="description" content="Free in-browser OSRS Colosseum simulator and Sol Heredit trainer. Practice Fortis Colosseum waves, reinforcements, and the Sol Heredit fight with accurate OSRS mechanics.">
+    <meta name="keywords" content="colosseum simulator, osrs colosseum simulator, colo sim, osrs colo sim, colosseum sim osrs, sol heredit trainer, sol heredit simulator, sol simulator, sol trainer, fortis colosseum simulator, fortis colosseum trainer, osrs colosseum trainer, colosseum trainer osrs">
+
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="OSRS Colosseum Simulator">
+    <meta property="og:title" content="OSRS Colosseum Simulator &amp; Sol Heredit Trainer">
+    <meta property="og:description" content="Free in-browser OSRS Colosseum simulator and Sol Heredit trainer. Practice Fortis Colosseum waves with accurate OSRS mechanics.">
+    <meta property="og:url" content="https://colosseum-simulator.detuks.com/">
+    <meta property="og:image" content="https://colosseum-simulator.detuks.com/webappicon.png">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="OSRS Colosseum Simulator &amp; Sol Heredit Trainer">
+    <meta name="twitter:description" content="Free in-browser OSRS Colosseum simulator and Sol Heredit trainer. Practice Fortis Colosseum waves with accurate OSRS mechanics.">
+    <meta name="twitter:image" content="https://colosseum-simulator.detuks.com/webappicon.png">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "GameApplication",
+      "name": "OSRS Colosseum Simulator & Sol Heredit Trainer",
+      "alternateName": ["Colo Sim", "Fortis Colosseum Simulator", "Sol Heredit Trainer"],
+      "description": "Free in-browser OSRS Colosseum simulator and Sol Heredit trainer. Practice Fortis Colosseum waves, reinforcements, and the Sol Heredit fight with accurate OSRS mechanics.",
+      "url": "https://colosseum-simulator.detuks.com/",
+      "image": "https://colosseum-simulator.detuks.com/webappicon.png",
+      "applicationCategory": "GameApplication",
+      "operatingSystem": "Any",
+      "browserRequirements": "Requires WebGL and modern browser",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "creator": {
+        "@type": "Person",
+        "name": "detuks"
+      }
+    }
+    </script>
+
     <script src="//wurfl.io/wurfl.js" crossorigin></script>
-    <title>Sol Heredit Trainer</title>
     <style>
       @font-face {
         font-family: 'OSRS';
@@ -29,6 +71,18 @@
         src: url(https://assets.colosim.com/assets/fonts/RuneScape-Plain-12.woff) format("woff");
         src: url(https://assets.colosim.com/assets/fonts/RuneScape-Plain-12.woff2) format("woff2");
       }
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
       body {
           overscroll-behavior: contain;
           overscroll-behavior-y: none;
@@ -185,6 +239,57 @@
     </style>
   </head>
   <body>
+    <header class="sr-only">
+      <h1>OSRS Colosseum Simulator &amp; Sol Heredit Trainer</h1>
+      <p>
+        A free, browser-based OSRS Colosseum simulator and Sol Heredit trainer. Practice any
+        wave of the Fortis Colosseum, learn reinforcement spawn patterns, and rehearse the Sol
+        Heredit boss fight with accurate Old School RuneScape mechanics. Often referred to as
+        "colo sim", "colosseum sim", "fortis colosseum trainer", or "sol simulator".
+      </p>
+
+      <h2>Features</h2>
+      <ul>
+        <li>Pick any Colosseum wave and replay random or specific spawns.</li>
+        <li>Practice the Sol Heredit boss fight, including all phases and special attacks.</li>
+        <li>Simulate Fortis Colosseum reinforcements and modifier combinations.</li>
+        <li>Configure gear loadouts, prayers, and tile markers.</li>
+        <li>Runs in the browser on desktop and mobile &mdash; no install required.</li>
+        <li>Open source re-implementation of OSRS combat mechanics.</li>
+      </ul>
+
+      <h2>Frequently asked questions</h2>
+      <h3>What is the OSRS Colosseum Simulator?</h3>
+      <p>
+        It is a free in-browser trainer for the Fortis Colosseum in Old School RuneScape.
+        You can practice waves, reinforcements, modifiers and the Sol Heredit fight without
+        risking your character or supplies in-game.
+      </p>
+      <h3>Is the Colo Sim / Sol Heredit trainer free?</h3>
+      <p>
+        Yes. The colosseum simulator and Sol Heredit trainer are completely free and run
+        entirely in your browser.
+      </p>
+      <h3>Does the Fortis Colosseum simulator work on mobile?</h3>
+      <p>
+        Yes. The colosseum simulator works on modern mobile browsers as well as desktop.
+      </p>
+      <h3>How accurate is the Sol Heredit simulator?</h3>
+      <p>
+        The simulator is built on an open-source re-implementation of the OSRS engine,
+        modeling tick timing, NPC behavior, prayers, and combat formulas as faithfully as
+        possible. Bug reports for OSRS mechanics divergences are welcome.
+      </p>
+
+      <nav>
+        <ul>
+          <li><a href="https://inferno-simulator.detuks.com/">OSRS Inferno Simulator &amp; Zuk Trainer</a></li>
+          <li><a href="https://detuks.com/colosseum">Colosseum automation plugin</a></li>
+          <li><a href="https://discord.com/invite/sGHcEYUneK">Join the Discord</a></li>
+        </ul>
+      </nav>
+    </header>
+
     <canvas id="world" onselectstart="return false" oncontextmenu="return false"></canvas>
     <div id="disclaimer_panel">All assets are property of Jagex.</div>
     <div id="death_modal" class="hidden">

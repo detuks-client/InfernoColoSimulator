@@ -1,6 +1,6 @@
 {
-  "short_name": "Inferno",
-  "name": "Inferno Trainer",
+  "short_name": "Colosseum",
+  "name": "OSRS Colosseum Simulator",
   "icons": [
     {
       "src": "/webappicon.png",
