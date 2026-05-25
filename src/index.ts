@@ -43,6 +43,13 @@ document.getElementById("settings").addEventListener("click", () => {
   ControlPanelController.controller.setActiveControl('SETTINGS');
 });
 
+document.getElementById("death_close").addEventListener("click", () => {
+  document.getElementById("death_modal").classList.add("hidden");
+});
+document.getElementById("death_automation").addEventListener("click", () => {
+  window.location.href = "https://detuks.com";
+});
+
 const tileMarkerColor = document.getElementById("tileMarkerColor") as HTMLInputElement;
 tileMarkerColor.addEventListener("input", () => {
   Settings.tileMarkerColor = tileMarkerColor.value;

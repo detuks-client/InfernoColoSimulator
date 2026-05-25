@@ -36,6 +36,8 @@ export class InfernoRegion extends Region {
   // Spawn indicator entities
   private spawnIndicators: Entity[] = [];
 
+  private deathHandled = false;
+
   get initialFacing() {
     return this.wave === 69 ? CardinalDirection.NORTH : CardinalDirection.SOUTH;
   }
@@ -659,6 +661,15 @@ export class InfernoRegion extends Region {
 
   postTick() {
     super.postTick();
+    const player = this.players[0];
+    if (player && player.isDying()) {
+      if (!this.deathHandled) {
+        this.deathHandled = true;
+        document.getElementById("death_modal").classList.remove("hidden");
+      }
+    } else {
+      this.deathHandled = false;
+    }
     this.handleWaveProgression();
   }
 

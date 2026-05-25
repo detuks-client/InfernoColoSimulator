@@ -13,7 +13,7 @@ if (!process.env.BUILD_DATE) {
 }
 if (!process.env.DEPLOY_URL) {
   isDevBuild = true;
-  process.env.DEPLOY_URL = "http://localhost:8000/";
+  process.env.DEPLOY_URL = "http://localhost:8008/";
 }
 const config = {
   mode: isDevBuild ? "development" : "production",
@@ -27,7 +27,7 @@ const config = {
   devServer: {
     contentBase: path.join(__dirname, "dist"),
     compress: true,
-    port: 8000,
+    port: 8008,
   },
   resolve: {
     extensions: [".tsx", ".ts", ".js"],
@@ -39,6 +39,8 @@ const config = {
         { from: `index.html`, to: "", context: `src/` },
         { from: `index.html`, to: "colosseum.html", context: `src/` },
         { from: `manifest.json`, to: "", context: `src/` },
+        { from: `robots.txt`, to: "", context: `src/` },
+        { from: `sitemap.xml`, to: "", context: `src/` },
         {
           from: `assets/images/webappicon.png`,
           to: "webappicon.png",
