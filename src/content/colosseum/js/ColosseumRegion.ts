@@ -1,6 +1,6 @@
 "use strict";
 
-import { Region, Viewport, Settings, Player, CardinalDirection, ImageLoader, Trainer } from "osrs-sdk";
+import { Region, Settings, Player, CardinalDirection, ImageLoader, Trainer } from "osrs-sdk";
 
 
 import ColosseumMapImage from "../assets/images/map.png";
@@ -74,8 +74,7 @@ export class ColosseumRegion extends Region {
     return !Settings.use3dView;
   }
 
-  initialiseRegion() {
-    // create player
+  private spawnEncounter(): Player {
     const player = new Player(this, {
       x: 27,
       y: 29,
@@ -108,13 +107,21 @@ export class ColosseumRegion extends Region {
 
     this.addMob(new SolHeredit(this, { x: 25, y: 24 }, { aggro: player }));
 
+    this.updateSolarFlares();
+
+    return player;
+  }
+
+  initialiseRegion() {
+    // settings must be loaded before spawnEncounter so updateSolarFlares uses the persisted level
+    ColosseumSettings.readFromStorage();
+
+    const player = this.spawnEncounter();
+
     // Add 3d scene
     if (Settings.use3dView) {
       this.addEntity(new ColosseumScene(this, { x: 0, y: 48 }));
     }
-
-    // setup UI and settings
-    ColosseumSettings.readFromStorage();
 
     const setupAttackConfig = (elementId: string, field: keyof typeof ColosseumSettings) => {
       const checkbox = document.getElementById(elementId) as HTMLInputElement;
@@ -136,7 +143,6 @@ export class ColosseumRegion extends Region {
       ColosseumSettings.persistToStorage();
       this.updateSolarFlares();
     });
-    this.updateSolarFlares();
 
     setupAttackConfig("echo_max_hp", "echoMaxHp");
     setupAttackConfig("echo_enrage", "echoEnrage");
@@ -193,12 +199,22 @@ export class ColosseumRegion extends Region {
 
   private enableReplay = false;
   private replayTick = 1;
+  private deathHandled = false;
   override postTick() {
+    const player = this.players[0];
+    if (player && player.isDying()) {
+      if (!this.deathHandled) {
+        this.deathHandled = true;
+        document.getElementById("death_modal").classList.remove("hidden");
+      }
+    } else {
+      // re-arm once the player is alive again (e.g. after SDK reset)
+      this.deathHandled = false;
+    }
     if (!this.enableReplay || this.world.getReadyTimer > 0) {
       return;
     }
     // replay mode for debug only
-    const player = this.players[0];
     const boss = this.mobs[0] as SolHeredit;
     switch (this.replayTick) {
       case 1:

@@ -1,8 +1,9 @@
-# Inferno Trainer
+# Colosseum Simulator
 
-- [Click here to try the Inferno Trainer](https://www.infernotrainer.com/)
-- [Click here to beta test the Inferno Trainer](https://beta.infernotrainer.com/)
-- [Join our Discord](https://discord.gg/Z3ZyY7Yzt5)
+- [Click here to try the Inferno Trainer/Simulator](https://inferno-simulator.detuks.com/)
+- [Click here to try the Colosseum Trainer/Simulator](https://colosseum-simulator.detuks.com/)
+- [Join our Discord](https://discord.com/invite/sGHcEYUneK)
+- [Use automation plugin](https://detuks.com/colosseum)
 
 ## What is this project?
 

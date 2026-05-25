@@ -39,6 +39,13 @@ tileMarkerColor.value = Settings.tileMarkerColor;
 
 const { player } = selectedRegion.initialiseRegion();
 
+document.getElementById("death_close").addEventListener("click", () => {
+  document.getElementById("death_modal").classList.add("hidden");
+});
+document.getElementById("death_automation").addEventListener("click", () => {
+  window.location.href = "https://detuks.com/colosseum";
+});
+
 Viewport.setupViewport(selectedRegion);
 Viewport.viewport.setPlayer(player);
 
