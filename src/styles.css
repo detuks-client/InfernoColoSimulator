@@ -1,0 +1,936 @@
+/* ==========================================================================
+   OSRS Colosseum Simulator — UI design system
+   Structure & primitives follow shadcn/ui (tokens, variants, sizing).
+   Palette & feel follow detuks.com (colosseum theme).
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Game fonts (used by the canvas renderer — keep these registered)
+   -------------------------------------------------------------------------- */
+@font-face {
+  font-family: "OSRS";
+  src: url(https://assets.colosim.com/assets/fonts/RuneScape-UF.woff2) format("woff2"),
+       url(https://assets.colosim.com/assets/fonts/RuneScape-UF.woff) format("woff");
+  font-display: block;
+}
+
+@font-face {
+  font-family: "Stats_11";
+  src: url(https://assets.colosim.com/assets/fonts/RuneScape-Plain-11.woff2) format("woff2"),
+       url(https://assets.colosim.com/assets/fonts/RuneScape-Plain-11.woff) format("woff");
+  font-display: block;
+}
+
+@font-face {
+  font-family: "Stats_12";
+  src: url(https://assets.colosim.com/assets/fonts/RuneScape-Plain-12.woff2) format("woff2"),
+       url(https://assets.colosim.com/assets/fonts/RuneScape-Plain-12.woff) format("woff");
+  font-display: block;
+}
+
+/* --------------------------------------------------------------------------
+   Design tokens
+   -------------------------------------------------------------------------- */
+:root {
+  /* detuks.com colosseum palette, expressed as shadcn-style HSL channels */
+  --background: 39 44% 62%;         /* #c9ab73  sand         */
+  --background-deep: 39 23% 59%;    /* #AF9E7E  taupe        */
+  --surface: 40 69% 95%;            /* #FBF5E9  cream        */
+  --foreground: 3 39% 19%;          /* #45201E  brown        */
+
+  --card: 40 69% 95%;               /* cream                 */
+  --card-foreground: 3 39% 19%;
+
+  --muted: 38 32% 76%;
+  --muted-foreground: 6 24% 34%;
+
+  --primary: 155 52% 26%;           /* #206649  colosseum green */
+  --primary-foreground: 0 0% 90%;   /* #E5E5E5                  */
+
+  --accent: 142 82% 52%;            /* #20e96a  brand green     */
+  --accent-foreground: 3 39% 12%;
+
+  /* No red exists in the colosseum theme — this is the #45201E hue, pushed
+     to a brick tone so warnings and the death dialog still read as danger. */
+  --destructive: 5 52% 38%;
+  --destructive-foreground: 40 69% 95%;
+
+  --border: 34 26% 46%;
+  --input: 34 26% 42%;
+  --ring: 155 52% 26%;
+
+  --radius: 0.5rem;
+
+  --font-sans: "Poppins", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-game: "OSRS", var(--font-sans);
+
+  /* SDK reserves exactly 232px on the right for the menu — do not change. */
+  --panel-width: 232px;
+}
+
+/* --------------------------------------------------------------------------
+   Base
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  /* The game canvas is position: fixed, so <body> has no layout height of its
+     own — paint the backdrop on the root so the gradient always has a box. */
+  min-height: 100%;
+  background-color: hsl(var(--background-deep));
+  background-image:
+    radial-gradient(90% 55% at 50% 0%, hsl(var(--surface) / 0.45), transparent 70%),
+    linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--background-deep)) 100%);
+  background-attachment: fixed;
+}
+
+body {
+  /* Keep the OSRS face as the document font so the canvas renderer's
+     `32px OSRS` / `Stats_11` draws are always backed by a loaded font. */
+  font-family: var(--font-game);
+  font-weight: normal;
+  font-style: normal;
+  margin: 0;
+  min-height: 100vh;
+  overflow-y: hidden;
+  overscroll-behavior: contain;
+  overscroll-behavior-y: none;
+  color: hsl(var(--foreground));
+  background: transparent;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#world {
+  position: fixed;
+}
+
+canvas {
+  image-rendering: pixelated;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.stats-font-11 {
+  font-family: "Stats_11";
+  font-size: 11px;
+}
+
+.stats-font-12 {
+  font-family: "Stats_12";
+  font-size: 12px;
+}
+
+/* --------------------------------------------------------------------------
+   Side panel shell
+   -------------------------------------------------------------------------- */
+#right_panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: var(--panel-width);
+  height: 100vh;
+  height: 100dvh;
+  padding: 14px 14px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 50;
+
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.4;
+  color: hsl(var(--foreground));
+
+  background-color: hsl(var(--background));
+  background-image: linear-gradient(
+    180deg,
+    hsl(var(--background)) 0%,
+    hsl(var(--background-deep)) 100%
+  );
+  border-left: 1px solid hsl(var(--foreground) / 0.25);
+  box-shadow: -12px 0 40px hsl(var(--foreground) / 0.35);
+}
+
+#right_panel::-webkit-scrollbar {
+  width: 6px;
+}
+
+#right_panel::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#right_panel::-webkit-scrollbar-thumb {
+  background: hsl(var(--foreground) / 0.3);
+  border-radius: 999px;
+}
+
+#right_panel::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.7);
+}
+
+#right_panel {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--foreground) / 0.3) transparent;
+}
+
+/* Brand header ---------------------------------------------------------- */
+.panel-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.panel-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: hsl(var(--foreground));
+}
+
+.panel-title svg {
+  color: hsl(var(--primary));
+  flex-shrink: 0;
+}
+
+.panel-title em {
+  font-style: normal;
+  color: hsl(var(--primary));
+}
+
+.panel-rule {
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, hsl(var(--primary)), transparent);
+}
+
+/* Sections -------------------------------------------------------------- */
+#sidebar_content,
+.panel-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#sidebar_content {
+  gap: 14px;
+}
+
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: hsl(var(--muted-foreground));
+  user-select: none;
+}
+
+.section-label::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, hsl(var(--foreground) / 0.3), transparent);
+}
+
+.section-note {
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: hsl(var(--muted-foreground) / 0.85);
+}
+
+/* Separator (shadcn) ----------------------------------------------------- */
+hr,
+.separator {
+  flex-shrink: 0;
+  height: 1px;
+  width: 100%;
+  margin: 2px 0;
+  border: 0;
+  background: hsl(var(--foreground) / 0.2);
+}
+
+/* --------------------------------------------------------------------------
+   Button
+   -------------------------------------------------------------------------- */
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 10px;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.15s ease, border-color 0.15s ease,
+    color 0.15s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+.btn svg {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+}
+
+.btn:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+.btn:disabled,
+.btn[aria-disabled="true"] {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.btn-sm {
+  height: 30px;
+  padding: 0 8px;
+  font-size: 12px;
+}
+
+.btn-icon {
+  width: 34px;
+  padding: 0;
+}
+
+/* Variants */
+.btn-primary {
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  box-shadow: 0 4px 14px hsl(var(--primary) / 0.2);
+}
+
+.btn-primary:hover {
+  background-color: hsl(var(--primary) / 0.88);
+  box-shadow: 0 8px 20px hsl(var(--primary) / 0.5);
+  transform: translateY(-1px);
+}
+
+.btn-accent {
+  background-color: hsl(var(--accent));
+  color: hsl(var(--accent-foreground));
+  box-shadow: 0 4px 14px hsl(var(--accent) / 0.3);
+}
+
+.btn-accent:hover {
+  background-color: hsl(var(--accent) / 0.9);
+  box-shadow: 0 8px 20px hsl(var(--accent) / 0.5);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background-color: hsl(var(--muted));
+  color: hsl(var(--foreground));
+}
+
+.btn-secondary:hover {
+  background-color: hsl(var(--surface));
+  transform: translateY(-1px);
+}
+
+.btn-outline {
+  background-color: hsl(var(--surface) / 0.72);
+  border-color: hsl(var(--border));
+  color: hsl(var(--foreground));
+}
+
+.btn-outline:hover {
+  background-color: hsl(var(--surface));
+  border-color: hsl(var(--primary) / 0.7);
+  color: hsl(var(--primary));
+  transform: translateY(-1px);
+}
+
+.btn-ghost {
+  background-color: transparent;
+  color: hsl(var(--muted-foreground));
+}
+
+.btn-ghost:hover {
+  background-color: hsl(var(--surface) / 0.6);
+  color: hsl(var(--foreground));
+}
+
+/* Link-style rows in the footer of the panel */
+.btn-link-row {
+  justify-content: flex-start;
+  gap: 8px;
+  height: 30px;
+  padding: 0 8px;
+  font-size: 12px;
+  font-weight: 400;
+  width: 100%;
+  color: hsl(var(--muted-foreground));
+  background: transparent;
+  border-color: transparent;
+}
+
+.btn-link-row svg {
+  color: hsl(var(--primary) / 0.85);
+}
+
+.btn-link-row:hover {
+  background-color: hsl(var(--surface) / 0.7);
+  color: hsl(var(--foreground));
+}
+
+.btn-link-row:hover svg {
+  color: hsl(var(--primary));
+}
+
+.btn-link-row .btn-trailing {
+  margin-left: auto;
+  width: 12px;
+  height: 12px;
+  opacity: 0.5;
+  color: hsl(var(--muted-foreground));
+}
+
+.btn-link-row:hover .btn-trailing {
+  opacity: 0.9;
+}
+
+/* --------------------------------------------------------------------------
+   Layout helpers
+   -------------------------------------------------------------------------- */
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-grow {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.field-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 30px;
+}
+
+.field-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 400;
+  color: hsl(var(--foreground) / 0.92);
+  cursor: pointer;
+  user-select: none;
+}
+
+/* --------------------------------------------------------------------------
+   Card
+   -------------------------------------------------------------------------- */
+.card {
+  padding: 10px 12px;
+  border: 1px solid hsl(var(--foreground) / 0.14);
+  border-radius: calc(var(--radius) + 2px);
+  background-color: hsl(var(--card) / 0.8);
+  box-shadow: 0 1px 2px hsl(var(--foreground) / 0.12);
+}
+
+/* --------------------------------------------------------------------------
+   Input (text / number)
+   -------------------------------------------------------------------------- */
+.input {
+  height: 34px;
+  width: 100%;
+  min-width: 0;
+  padding: 0 10px;
+  border: 1px solid hsl(var(--input));
+  border-radius: var(--radius);
+  background-color: hsl(var(--surface) / 0.85);
+  color: hsl(var(--foreground));
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.input::placeholder {
+  color: hsl(var(--muted-foreground) / 0.6);
+}
+
+.input:focus,
+.input:focus-visible {
+  outline: none;
+  border-color: hsl(var(--ring));
+  box-shadow: 0 0 0 3px hsl(var(--ring) / 0.22);
+}
+
+/* --------------------------------------------------------------------------
+   Select
+   -------------------------------------------------------------------------- */
+.select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  height: 34px;
+  width: 100%;
+  padding: 0 30px 0 10px;
+  border: 1px solid hsl(var(--input));
+  border-radius: var(--radius);
+  background-color: hsl(var(--surface) / 0.85);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2345201E' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  color: hsl(var(--foreground));
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  line-height: 1;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.select:hover {
+  border-color: hsl(var(--primary) / 0.7);
+}
+
+.select:focus,
+.select:focus-visible {
+  outline: none;
+  border-color: hsl(var(--ring));
+  box-shadow: 0 0 0 3px hsl(var(--ring) / 0.22);
+}
+
+/* Native dropdown list — best-effort theming (Chromium/Firefox) */
+.select option {
+  background-color: #fbf5e9;
+  color: #45201e;
+}
+
+/* --------------------------------------------------------------------------
+   Switch (settings toggles)
+   -------------------------------------------------------------------------- */
+.switch {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  flex-shrink: 0;
+  margin: 0;
+  width: 34px;
+  height: 20px;
+  border: 1px solid hsl(var(--border));
+  border-radius: 999px;
+  background-color: hsl(var(--surface) / 0.7);
+  background-image: radial-gradient(
+    circle 6px at 10px 9px,
+    hsl(var(--muted-foreground) / 0.75) 100%,
+    transparent 100%
+  );
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  cursor: pointer;
+  transition: background-color 0.18s ease, background-position 0.18s ease,
+    border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.switch:checked {
+  background-color: hsl(var(--primary));
+  border-color: hsl(var(--primary));
+  background-image: radial-gradient(
+    circle 6px at 10px 9px,
+    hsl(var(--primary-foreground)) 100%,
+    transparent 100%
+  );
+  background-position: 13px 0;
+  box-shadow: 0 0 12px hsl(var(--primary) / 0.4);
+}
+
+.switch:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   Toggle chips
+   -------------------------------------------------------------------------- */
+.chip-group {
+  display: flex;
+  gap: 6px;
+}
+
+.chip-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.chip {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+  background-color: hsl(var(--surface) / 0.6);
+  color: hsl(var(--muted-foreground));
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.15s ease, border-color 0.15s ease,
+    color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.chip:hover {
+  border-color: hsl(var(--primary) / 0.55);
+  color: hsl(var(--foreground));
+}
+
+.chip-input:checked + .chip {
+  background-color: hsl(var(--primary) / 0.15);
+  border-color: hsl(var(--primary) / 0.75);
+  color: hsl(var(--primary));
+}
+
+.chip-input:focus-visible + .chip {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   Color swatch
+   -------------------------------------------------------------------------- */
+.color-swatch {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  flex-shrink: 0;
+  width: 34px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid hsl(var(--border));
+  border-radius: 6px;
+  background-color: transparent;
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.color-swatch::-webkit-color-swatch-wrapper {
+  padding: 2px;
+}
+
+.color-swatch::-webkit-color-swatch {
+  border: 0;
+  border-radius: 4px;
+}
+
+.color-swatch::-moz-color-swatch {
+  border: 0;
+  border-radius: 4px;
+}
+
+.color-swatch:hover {
+  border-color: hsl(var(--primary) / 0.7);
+}
+
+.color-swatch:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   Badge
+   -------------------------------------------------------------------------- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  height: 16px;
+  padding: 0 6px;
+  border: 1px solid hsl(var(--primary) / 0.45);
+  border-radius: 999px;
+  background-color: hsl(var(--primary) / 0.14);
+  color: hsl(var(--primary));
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
+   Callouts
+   -------------------------------------------------------------------------- */
+.callout {
+  display: flex;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid hsl(var(--destructive) / 0.4);
+  border-radius: var(--radius);
+  background-color: hsl(var(--destructive) / 0.1);
+  color: hsl(var(--foreground));
+  font-family: var(--font-sans);
+  font-size: 11px;
+  line-height: 1.45;
+  text-align: left;
+}
+
+.callout:empty {
+  display: none;
+}
+
+.callout svg {
+  flex-shrink: 0;
+  width: 13px;
+  height: 13px;
+  margin-top: 1px;
+}
+
+.callout-note {
+  border-color: hsl(var(--foreground) / 0.2);
+  background-color: hsl(var(--surface) / 0.65);
+  color: hsl(var(--muted-foreground));
+}
+
+.callout-note svg {
+  color: hsl(var(--destructive));
+}
+
+.callout-hint {
+  border-color: hsl(var(--primary) / 0.4);
+  background-color: hsl(var(--primary) / 0.1);
+  color: hsl(var(--foreground) / 0.9);
+}
+
+.callout-hint svg {
+  color: hsl(var(--primary));
+}
+
+.callout strong {
+  font-weight: 600;
+  color: hsl(var(--destructive));
+}
+
+/* --------------------------------------------------------------------------
+   Credits list
+   -------------------------------------------------------------------------- */
+#credits:not(:empty) {
+  padding: 8px 10px;
+  border: 1px solid hsl(var(--foreground) / 0.16);
+  border-radius: var(--radius);
+  background-color: hsl(var(--surface) / 0.7);
+}
+
+#credits ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+#credits li {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  line-height: 1.4;
+  color: hsl(var(--muted-foreground));
+  padding-left: 10px;
+  position: relative;
+}
+
+#credits li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 6px;
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background-color: hsl(var(--primary) / 0.7);
+}
+
+/* --------------------------------------------------------------------------
+   Disclaimer — floats over the (dark) game canvas, so it stays a light chip
+   -------------------------------------------------------------------------- */
+#disclaimer_panel {
+  position: fixed;
+  left: 10px;
+  bottom: 10px;
+  z-index: 40;
+  max-width: 320px;
+  padding: 6px 10px;
+  border: 1px solid hsl(var(--foreground) / 0.2);
+  border-radius: var(--radius);
+  background-color: hsl(var(--surface) / 0.88);
+  backdrop-filter: blur(6px);
+  font-family: var(--font-sans);
+  font-size: 10.5px;
+  line-height: 1.5;
+  text-align: left;
+  color: hsl(var(--muted-foreground));
+  pointer-events: none;
+}
+
+#disclaimer_panel a,
+#disclaimer_panel a:visited {
+  color: hsl(var(--primary));
+  text-decoration: none;
+  pointer-events: all;
+}
+
+#disclaimer_panel a:hover {
+  text-decoration: underline;
+}
+
+/* --------------------------------------------------------------------------
+   Dialog (death modal)
+   -------------------------------------------------------------------------- */
+#death_modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background-color: hsl(var(--foreground) / 0.7);
+  backdrop-filter: blur(4px);
+  animation: dialog-overlay-in 0.15s ease-out;
+}
+
+.death-modal-content {
+  width: 340px;
+  max-width: 100%;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border: 1px solid hsl(var(--foreground) / 0.2);
+  border-radius: calc(var(--radius) + 4px);
+  background-color: hsl(var(--surface));
+  background-image: radial-gradient(
+    120% 80% at 50% 0%,
+    hsl(var(--destructive) / 0.16),
+    transparent 65%
+  );
+  box-shadow: 0 24px 60px hsl(var(--foreground) / 0.5);
+  font-family: var(--font-sans);
+  color: hsl(var(--foreground));
+  text-align: center;
+  animation: dialog-content-in 0.18s ease-out;
+}
+
+.dialog-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin: 0 auto 4px;
+  border: 1px solid hsl(var(--destructive) / 0.4);
+  border-radius: 999px;
+  background-color: hsl(var(--destructive) / 0.14);
+  color: hsl(var(--destructive));
+}
+
+.death-modal-content h2 {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: hsl(var(--foreground));
+}
+
+.dialog-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+@keyframes dialog-overlay-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes dialog-content-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Reduced motion
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .btn:hover {
+    transform: none;
+  }
+}

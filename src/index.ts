@@ -90,7 +90,7 @@ function drawAssetLoadingBar(loadingProgress: number) {
   canvas.height = canvasHeight;
   const context = canvas.getContext("2d");
   context.clearRect(0, 0, canvas.width, canvas.height);
-  context.fillStyle = "#FFFF00";
+  context.fillStyle = "#45201E";
   context.font = "32px OSRS";
   context.textAlign = "center";
   context.fillText(`Loading models: ${Math.floor(loadingProgress * 100)}%`, canvas.width / 2, canvas.height / 2);
@@ -102,7 +102,7 @@ function drawAssetLoadingBar(loadingProgress: number) {
   context.drawImage(specialAttackBarBackground, left, top, width, height);
   context.fillStyle = "#730606";
   context.fillRect(left + 2 * scale, top + 6 * scale, width - 4 * scale, height - 12 * scale);
-  context.fillStyle = "#397d3b";
+  context.fillStyle = "#206649";
   context.fillRect(left + 2 * scale, top + 6 * scale, (width - 4 * scale) * loadingProgress, height - 12 * scale);
   context.fillStyle = "#000000";
   context.globalAlpha = 0.5;
