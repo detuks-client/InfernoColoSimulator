@@ -38,6 +38,7 @@ const config = {
       patterns: [
         { from: `index.html`, to: "", context: `src/` },
         { from: `index.html`, to: "colosseum.html", context: `src/` },
+        { from: `styles.css`, to: "", context: `src/` },
         { from: `manifest.json`, to: "", context: `src/` },
         { from: `robots.txt`, to: "", context: `src/` },
         { from: `sitemap.xml`, to: "", context: `src/` },
